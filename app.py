@@ -10,8 +10,14 @@ st.title("📊 Robô Analista de Trading")
 ticker = st.text_input("Digite o ativo (ex: AAPL, BTC-USD):", value="AAPL")
 
 if st.button("Simular"):
-    df = yf.download(ticker, period='30d', interval='15m')
-    df = aplicar_indicadores(df)
+df = yf.download(ticker, period='30d', interval='15m')
+
+if df.empty or 'Close' not in df.columns:
+    st.error("Não foi possível baixar os dados. Verifique se o ativo digitado é válido.")
+    st.stop()
+
+df = aplicar_indicadores(df)
+
     df = decidir_operacao(df)
     resultado = simular_operacoes(df)
     st.success(f"Resultado da simulação: R$ {resultado:.2f}")
